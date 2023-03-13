@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from "styled-components"
-import { Card, createStyles, Image, Text, Group, Badge, Button, Table, Input, Tooltip } from '@mantine/core';
+import { Table, Input, Tooltip } from '@mantine/core';
 import { useState } from 'react';
 import { IconBrandTwitter, IconAlertCircle } from '@tabler/icons';
 import { Link } from 'react-router-dom';
