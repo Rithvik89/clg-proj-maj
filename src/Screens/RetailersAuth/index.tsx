@@ -20,7 +20,7 @@ function RetailersAuth() {
   const navigator = useNavigate();
 
   function handleLogin() {
-    fetch("http://localhost:5000/retailersAuth", {
+    fetch("https://qzcmrn5rh2.execute-api.ap-south-1.amazonaws.com/retailersAuth", {
       body: JSON.stringify(credentials),
       headers: {
         'Accept': 'application/json',
