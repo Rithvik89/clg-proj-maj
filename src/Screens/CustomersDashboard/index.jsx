@@ -74,7 +74,7 @@ function HomeIndex() {
   const { productId } = useParams()
   const [data, setData] = useState(null);
   useEffect(() => {
-    fetch('http://localhost:5000/productDetails', {
+    fetch('https://qzcmrn5rh2.execute-api.ap-south-1.amazonaws.com/productDetails', {
       body: JSON.stringify({ productId }),
       method: "POST"
     })

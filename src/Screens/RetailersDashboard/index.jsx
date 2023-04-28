@@ -21,7 +21,7 @@ function HomeIndex() {
   console.log(token);
 
   useEffect(() => {
-    fetch("http://localhost:5000/retailersDashboard", {
+    fetch("https://qzcmrn5rh2.execute-api.ap-south-1.amazonaws.com/retailersDashboard", {
       body: JSON.stringify({ token: token }),
       headers: {
         'Accept': 'application/json',
