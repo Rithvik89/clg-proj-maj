@@ -72,14 +72,32 @@ const elements = [
 
 function HomeIndex() {
   const { productId } = useParams()
-  const [data, setData] = useState(null);
+  const [qualityData, setQualityData] = useState(null);
+  const [quantityData, setQuantityData] = useState(null);
+  const [productData, setProductData] = useState(null);
+  const [data, setData] = useState(null)
+
+  const size = window.innerWidth
+  
   useEffect(() => {
-    fetch('https://qzcmrn5rh2.execute-api.ap-south-1.amazonaws.com/productDetails', {
-      body: JSON.stringify({ productId }),
-      method: "POST"
+    fetch(`https://qzcmrn5rh2.execute-api.ap-south-1.amazonaws.com/productDetails/${productId}`, {
+      method: "GET"
     })
       .then(res => res.json())
-      .then(res => { console.log(res.temp); setData(res) })
+      .then(res => { setProductData(res) })
+
+    fetch(`https://qzcmrn5rh2.execute-api.ap-south-1.amazonaws.com/QualityDetails/${productId}`,{
+      method:"GET"
+    })
+    .then(res=>res.json())
+    .then(res=>setQualityData(res))
+
+    fetch(`https://qzcmrn5rh2.execute-api.ap-south-1.amazonaws.com/QuantityDetails/${productId}`,{
+      method:"GET"
+    })
+    .then(res=>res.json())
+    .then(res=>setQuantityData(res))
+
   }, [])
   const ths = (
     <tr>
@@ -147,7 +165,7 @@ function HomeIndex() {
       <div style={{
         width: "40%"
       }}>
-        <Line options={options} data={{
+        {/* <Line options={options} data={{
           datasets: [{
             data: data.mq, label: "methance conc in ppm",
             borderColor: '#36A2EB',
@@ -155,52 +173,56 @@ function HomeIndex() {
             fill: true,
           }],
           labels: labelGenerator(data.mq.length)
-        }} />
+        }} /> */}
       </div>
     </div> : null)
   }
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
-      <h1 style={{ marginTop: "15px" }}>Customers Dashboard</h1>
-      {renderChart()}
-      {dougnutGenerator()}
-      <SHomeIndex>
-        <Table striped highlightOnHover withBorder withColumnBorders style={{ width: "50%" }}>
-          <caption>Product Details</caption>
-          <thead>{ths}</thead>
-          <tbody>{rows}</tbody>
-        </Table>
+     size>=700 ? <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
+     <h1 style={{ marginTop: "15px" }}>Customers Dashboard</h1>
+     {renderChart()}
+     {dougnutGenerator()}
+     <SHomeIndex>
+       <Table striped highlightOnHover withBorder withColumnBorders style={{ width: "50%" }}>
+         <caption>Product Details</caption>
+         <thead>{ths}</thead>
+         <tbody>{rows}</tbody>
+       </Table>
 
-        <Timeline active={1} bulletSize={24} lineWidth={2}>
-          <Timeline.Item bullet={<IconGitBranch size={12} />} title="Reached Packaging unit">
-            <Text color="dimmed" size="sm">Started Packing Phase</Text>
-            <Text size="xs" mt={4}>13 days ago</Text>
-          </Timeline.Item>
+       <Timeline active={1} bulletSize={24} lineWidth={2}>
+         <Timeline.Item bullet={<IconGitBranch size={12} />} title="Reached Packaging unit">
+           <Text color="dimmed" size="sm">Started Packing Phase</Text>
+           <Text size="xs" mt={4}>13 days ago</Text>
+         </Timeline.Item>
 
-          <Timeline.Item bullet={<IconGitCommit size={12} />} title="Departed">
-            <Text color="dimmed" size="sm">Departed from Packaging and processing unit</Text>
-            <Text size="xs" mt={4}>11 days ago</Text>
-          </Timeline.Item>
+         <Timeline.Item bullet={<IconGitCommit size={12} />} title="Departed">
+           <Text color="dimmed" size="sm">Departed from Packaging and processing unit</Text>
+           <Text size="xs" mt={4}>11 days ago</Text>
+         </Timeline.Item>
 
-          <Timeline.Item title="Reached Distributor Unit 1" bullet={<IconGitPullRequest size={12} />}>
-            <Text color="dimmed" size="sm">Reached Distribution unit at Karimnagar</Text>
-            <Text size="xs" mt={4}>10 days ago</Text>
-          </Timeline.Item>
+         <Timeline.Item title="Reached Distributor Unit 1" bullet={<IconGitPullRequest size={12} />}>
+           <Text color="dimmed" size="sm">Reached Distribution unit at Karimnagar</Text>
+           <Text size="xs" mt={4}>10 days ago</Text>
+         </Timeline.Item>
 
-          <Timeline.Item title="Reached Distributor Unit 2" bullet={<IconMessageDots size={12} />}>
-            <Text color="dimmed" size="sm">Reached Distribution unit at LMD colony</Text>
-            <Text size="xs" mt={4}>10 days ago</Text>
-          </Timeline.Item>
+         <Timeline.Item title="Reached Distributor Unit 2" bullet={<IconMessageDots size={12} />}>
+           <Text color="dimmed" size="sm">Reached Distribution unit at LMD colony</Text>
+           <Text size="xs" mt={4}>10 days ago</Text>
+         </Timeline.Item>
 
-          <Timeline.Item title="Reached Retailer Unit" bullet={<IconMessageDots size={12} />}>
-            <Text color="dimmed" size="sm">Reached Ratnadeep SuperMarket</Text>
-            <Text size="xs" mt={4}>12 minutes ago</Text>
-          </Timeline.Item>
-        </Timeline>
+         <Timeline.Item title="Reached Retailer Unit" bullet={<IconMessageDots size={12} />}>
+           <Text color="dimmed" size="sm">Reached Ratnadeep SuperMarket</Text>
+           <Text size="xs" mt={4}>12 minutes ago</Text>
+         </Timeline.Item>
+       </Timeline>
 
-      </SHomeIndex>
+     </SHomeIndex>
 
-    </div>
+   </div>:<div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
+     <h1 style={{ marginTop: "15px" }}>Customers Dashboard</h1>
+     {dougnutGenerator()}
+     {renderChart()}
+     </div>
   )
 }
 
