@@ -8,6 +8,7 @@ import RetailersDashboard from "./Screens/RetailersDashboard/index"
 import DistributorsAuth from "./Screens/DistributorsAuth/index"
 import DistributorsDashboard from "./Screens/DistributorsDashboard/index"
 import CustomersDashboard from "./Screens/CustomersDashboard/index"
+import ProductDetailsIndex from "./Screens/ProductDetails/index"
 
 const SApp = styled.div`
   display: flex;
@@ -27,6 +28,7 @@ function App() {
         <Route path="/distributorsDashboard" element={<DistributorsDashboard />} />
         <Route path="/retailersAuth" element={<RetailersAuth />} />
         <Route path="/distributorsAuth" element={<DistributorsAuth />} />
+        <Route path="/addProduct" element={<ProductDetailsIndex />} />
       </Routes>
 
     </SApp>
