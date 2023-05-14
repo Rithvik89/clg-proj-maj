@@ -1,8 +1,10 @@
 import React from 'react'
 import styled from "styled-components"
-import { Card, createStyles,Image,Text,Group,Badge,Button, Table, Input ,Tooltip} from '@mantine/core';
+import { Card, createStyles,Image,Text,Group,Badge,Button, Table, Input ,Tooltip, Modal} from '@mantine/core';
 import { useState } from 'react';
 import { IconBrandTwitter,IconAlertCircle } from '@tabler/icons';
+import { useDisclosure } from '@mantine/hooks';
+import { useNavigate } from 'react-router';
 
 
 const SHomeIndex = styled.div`
@@ -23,6 +25,8 @@ const elements = [
 ];
 
 function HomeIndex() {
+  const navigator = useNavigate();
+
   const ths = (
     <tr>
       <th>count</th>
@@ -57,6 +61,9 @@ return (
       }
     
     />
+    
+    <Button onClick={()=>navigator("/addProduct")} style={{margin:"10px"}}>Add Product</Button>
+
     <SHomeIndex>
       <Table striped highlightOnHover withBorder withColumnBorders style={{width:"35%"}}>
       <caption style={{fontWeight:1000}}>Transaction In</caption>
