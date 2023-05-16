@@ -67,7 +67,7 @@ function ProductDetailsIndex() {
         <Group position="right" mt="md">
           <Button onClick = {()=>{
             console.log("values here", form.values)
-             fetch("http://localhost:5000/productDetails", {
+             fetch("https://qzcmrn5rh2.execute-api.ap-south-1.amazonaws.com/productDetails", {
                 body: JSON.stringify(form.values),
                 headers: {
                   'Accept': 'application/json',
