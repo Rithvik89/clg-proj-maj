@@ -29,10 +29,9 @@ function SignupSectionIndex() {
       method: "POST"
     })
       .then(res => res.json())
-      .then(({ token, match }) => {
+      .then(({ userId }) => {
         if (!token) return alert("creds are not correct")
-        setToken('token', token)
-        handleRouteToProfile();
+        return alert(`user created with userId ${userId}`)
       })
 
   }
@@ -101,18 +100,6 @@ function SignupSectionIndex() {
           });
         }}
       />
-      <Button
-        variant="subtle"
-        compact
-        style={{
-          margin: "5px",
-        }}
-        onClick={() => {
-          setForgotPasswordModal(true);
-        }}
-      >
-        Forgot password?
-      </Button>
 
       <Button
         disabled={

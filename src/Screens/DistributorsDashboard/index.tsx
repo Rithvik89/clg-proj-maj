@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { IconBrandTwitter,IconAlertCircle } from '@tabler/icons';
 import { useDisclosure } from '@mantine/hooks';
 import { useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 
 
 const SHomeIndex = styled.div`
@@ -43,7 +44,7 @@ function HomeIndex() {
       <td>{element.transactionDate}</td>
       <td>{element.broughtFrom}</td>
       <td>{element.value}</td>
-      <td>{element.productId}</td>
+      <td><Link to={`/customerDashboard/1`} >{element.productId}</Link></td>
     </tr>
   ));
 return (

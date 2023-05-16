@@ -13,14 +13,15 @@ const SHomeIndex = styled.div`
 `
 
 function RetailersAuth() {
-  const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const [credentials, setCredentials] = useState({ email: "", password: "",role:"retailer" });
   const [showPassword, setShowPassword] = useState(false);
   const [forgotPasswordModal, setForgotPasswordModal] = useState(false);
   const [token, setToken] = useCookies(['token'])
   const navigator = useNavigate();
 
-  function handleLogin() {
-    fetch("https://qzcmrn5rh2.execute-api.ap-south-1.amazonaws.com/retailersAuth", {
+  function handleLogin() {;
+    console.log(credentials)
+    fetch("https://qzcmrn5rh2.execute-api.ap-south-1.amazonaws.com/roleBasedAuth", {
       body: JSON.stringify(credentials),
       headers: {
         'Accept': 'application/json',

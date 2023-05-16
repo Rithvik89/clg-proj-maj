@@ -70,11 +70,23 @@ const elements = [
   { count: 7, type: "Owners", value: 'Reliance India Pvt.Lmd', lastUpdate: '12/10/2022' },
 ];
 
+const quan = [
+  {count :1, product_stop: "Not yet decided", weight_stop:"Not yet weighted", taken_at:"--/--/----"},
+  {count :2, product_stop: "Not yet decided", weight_stop:"Not yet weighted", taken_at:"--/--/----"},
+  {count :3, product_stop: "Not yet decided", weight_stop:"Not yet weighted", taken_at:"--/--/----"},
+  {count :4, product_stop: "Not yet decided", weight_stop:"Not yet weighted", taken_at:"--/--/----"},
+  {count :5, product_stop: "Not yet decided", weight_stop:"Not yet weighted", taken_at:"--/--/----"},
+]
+
+let temperatureData= []
+let n=0;
+let methaneData = []
+
 function HomeIndex() {
   const { productId } = useParams()
-  const [qualityData, setQualityData] = useState(null);
-  const [quantityData, setQuantityData] = useState(null);
-  const [productData, setProductData] = useState(null);
+  let [qualityData, setQualityData] = useState(null);
+  let [quantityData, setQuantityData] = useState(null);
+  let [productData, setProductData] = useState(null);
   const [data, setData] = useState(null)
 
   const size = window.innerWidth
@@ -84,21 +96,79 @@ function HomeIndex() {
       method: "GET"
     })
       .then(res => res.json())
-      .then(res => { setProductData(res) })
+      .then(res => { 
+        elements[0].value = res.products[0].product_type
+        elements[1].value = res.products[0].product_name
+        elements[2].value = productId
+        elements[3].value = res.products[0].weight_
+        elements[4].value = res.products[0].price_
+        elements[5].value = res.products[0].packaged_date
+        elements[6].value = res.products[0].brought_from
+        setProductData(res.products[0]);
+      })
 
-    fetch(`https://qzcmrn5rh2.execute-api.ap-south-1.amazonaws.com/QualityDetails/${productId}`,{
+    fetch(`https://qzcmrn5rh2.execute-api.ap-south-1.amazonaws.com/qualityDetails/${productId}`,{
       method:"GET"
     })
     .then(res=>res.json())
-    .then(res=>setQualityData(res))
+    .then(res=>{
+      console.log("here in quality",res.quality_details)
+      n=0;
+      res.quality_details.map(each=>{
+        temperatureData.push(each.temperature);
+        n=n+1;
+      })
+      res.quality_details.map(each=>{
+        methaneData.push(each.gas);
+      })
 
-    fetch(`https://qzcmrn5rh2.execute-api.ap-south-1.amazonaws.com/QuantityDetails/${productId}`,{
+      setQualityData(res.quality_details)
+    })
+
+    fetch(`https://qzcmrn5rh2.execute-api.ap-south-1.amazonaws.com/quantityDetails/${productId}`,{
       method:"GET"
     })
     .then(res=>res.json())
-    .then(res=>setQuantityData(res))
+    .then(res=>{
+      console.log(res.quantity_details.length)
+      if(res.quantity_details.length>0){
+        quan[0].product_stop = res.quantity_details[0].product_stop;
+        quan[0].weight_stop = res.quantity_details[0].weight_stop + " Kgs";
+        quan[0].taken_at= res.quantity_details[0].taken_at
+      }
+      if(res.quantity_details.length>1){
+        quan[1].product_stop = res.quantity_details[1].product_stop;
+        quan[1].weight_stop = res.quantity_details[1].weight_stop + "Kgs";
+        quan[1].taken_at= res.quantity_details[1].taken_at
+      }
+      if(res.quantity_details.length>2){
+        quan[2].product_stop = res.quantity_details[2].product_stop;
+        quan[2].weight_stop = res.quantity_details[2].weight_stop+ "Kgs";
+        quan[2].taken_at= res.quantity_details[2].taken_at
+      }
+      if(res.quantity_details.length>3){
+        quan[3].product_stop = res.quantity_details[3].product_stop;
+        quan[3].weight_stop = res.quantity_details[3].weight_stop+ "Kgs";
+        quan[3].taken_at= res.quantity_details[3].taken_at
+      }
+      if(res.quantity_details.length>4){
+        quan[4].product_stop = res.quantity_details[4].product_stop;
+        quan[4].weight_stop = res.quantity_details[4].weight_stop+ "Kgs";
+        quan[4].taken_at= res.quantity_details[4].taken_at
+      }
+      
+      setQuantityData(res.quantity_details)
+    })
 
   }, [])
+
+  console.log(qualityData);
+  console.log(quantityData);
+  console.log(productData);
+  console.log(elements);
+  console.log(n)
+
+
   const ths = (
     <tr>
       <th>S.No</th>
@@ -116,6 +186,7 @@ function HomeIndex() {
       <td>{element.lastUpdate}</td>
     </tr>
   ));
+
   const labelGenerator = (n) => {
     const label = [];
     for (let i = 0; i < n; i++)
@@ -123,8 +194,8 @@ function HomeIndex() {
     return label;
   }
   const dougnutGenerator = () => {
-    if (!data) return null
-    const { p } = data;
+    if (!qualityData) return null
+    const  p = temperatureData[0];
     let color = "rgb(0,255,0)";
     if (p > 60) { //danger
       color = "rgb(255,0,0)";
@@ -135,7 +206,7 @@ function HomeIndex() {
       width: "20%",
       position: "relative"
     }}><Doughnut data={{
-      labels: ["percentage perished", "_"],
+      labels: ["percentage perished", "percentage usable"],
       datasets: [
         { data: [p, 100 - p], backgroundColor: [color, "rgba(0,0,0,0.1)"] }
       ]
@@ -148,32 +219,32 @@ function HomeIndex() {
     }}>{p}%</h1></div>
   }
   function renderChart() {
-    return (data ? <div style={{ width: "70%", display: "flex", justifyContent: "space-evenly" }}>
+    return (temperatureData ? <div style={{ width: "70%", display: "flex", justifyContent: "space-evenly" }}>
       <div style={{
         width: "40%"
       }}>
         <Line options={options} data={{
           datasets: [{
-            data: data.temp, label: "temerature",
+            data: temperatureData, label: "temerature",
             borderColor: 'rgb(255, 99, 132)',
             backgroundColor: 'rgba(255, 99, 132, 0.5)',
             fill: true,
           }],
-          labels: labelGenerator(data.temp.length)
+          labels: labelGenerator(n)
         }} />
       </div>
       <div style={{
         width: "40%"
       }}>
-        {/* <Line options={options} data={{
+        <Line options={options} data={{
           datasets: [{
-            data: data.mq, label: "methance conc in ppm",
+            data: methaneData, label: "methance conc in ppm",
             borderColor: '#36A2EB',
             backgroundColor: '#36A2EBA0',
             fill: true,
           }],
-          labels: labelGenerator(data.mq.length)
-        }} /> */}
+          labels: labelGenerator(n)
+        }} />
       </div>
     </div> : null)
   }
@@ -190,29 +261,34 @@ function HomeIndex() {
        </Table>
 
        <Timeline active={1} bulletSize={24} lineWidth={2}>
-         <Timeline.Item bullet={<IconGitBranch size={12} />} title="Reached Packaging unit">
-           <Text color="dimmed" size="sm">Started Packing Phase</Text>
-           <Text size="xs" mt={4}>13 days ago</Text>
+         <Timeline.Item bullet={<IconGitBranch size={12} />} title="Reached Stop 1 ">
+          <Text color="dimmed" size="sm">{quan[0].weight_stop}</Text>
+           <Text color="dimmed" size="sm">{quan[0].product_stop}</Text>
+           <Text size="xs" mt={4}>{quan[0].taken_at}</Text>
          </Timeline.Item>
 
-         <Timeline.Item bullet={<IconGitCommit size={12} />} title="Departed">
-           <Text color="dimmed" size="sm">Departed from Packaging and processing unit</Text>
-           <Text size="xs" mt={4}>11 days ago</Text>
+         <Timeline.Item bullet={<IconGitCommit size={12} />} title="Reached Stop 2">
+         <Text color="dimmed" size="sm">{quan[1].weight_stop}</Text>
+           <Text color="dimmed" size="sm">{quan[1].product_stop}</Text>
+           <Text size="xs" mt={4}>{quan[1].taken_at}</Text>
          </Timeline.Item>
 
-         <Timeline.Item title="Reached Distributor Unit 1" bullet={<IconGitPullRequest size={12} />}>
-           <Text color="dimmed" size="sm">Reached Distribution unit at Karimnagar</Text>
-           <Text size="xs" mt={4}>10 days ago</Text>
+         <Timeline.Item title="Reached Stop 3" bullet={<IconGitPullRequest size={12} />}>
+         <Text color="dimmed" size="sm">{quan[2].weight_stop}</Text>
+           <Text color="dimmed" size="sm">{quan[2].product_stop}</Text>
+           <Text size="xs" mt={4}>{quan[2].taken_at}</Text>
          </Timeline.Item>
 
-         <Timeline.Item title="Reached Distributor Unit 2" bullet={<IconMessageDots size={12} />}>
-           <Text color="dimmed" size="sm">Reached Distribution unit at LMD colony</Text>
-           <Text size="xs" mt={4}>10 days ago</Text>
+         <Timeline.Item title="Reached Stop 4" bullet={<IconMessageDots size={12} />}>
+         <Text color="dimmed" size="sm">{quan[3].weight_stop}</Text>
+           <Text color="dimmed" size="sm">{quan[3].product_stop}</Text>
+           <Text size="xs" mt={4}>{quan[3].taken_at}</Text>
          </Timeline.Item>
 
-         <Timeline.Item title="Reached Retailer Unit" bullet={<IconMessageDots size={12} />}>
-           <Text color="dimmed" size="sm">Reached Ratnadeep SuperMarket</Text>
-           <Text size="xs" mt={4}>12 minutes ago</Text>
+         <Timeline.Item title="Reached Stop 5" bullet={<IconMessageDots size={12} />}>
+         <Text color="dimmed" size="sm"> {quan[4].weight_stop}</Text>
+           <Text color="dimmed" size="sm">{quan[4].product_stop}</Text>
+           <Text size="xs" mt={4}>{quan[4].taken_at}</Text>
          </Timeline.Item>
        </Timeline>
 

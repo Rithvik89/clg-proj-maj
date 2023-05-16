@@ -20,6 +20,7 @@ function ProductDetailsIndex() {
   return (
     <Box maw={500} mx="auto" style={{margin:"100px"}}>
       <form onSubmit={form.onSubmit((values) => console.log(values))}>
+        <h1 style={{margin:"20px"}}>New Product Details</h1>
         <TextInput
           withAsterisk
           label="Product Type"
@@ -64,9 +65,10 @@ function ProductDetailsIndex() {
         />
 
         <Group position="right" mt="md">
-          <Button type="submit" onSubmit = {()=>{
-             fetch("https://qzcmrn5rh2.execute-api.ap-south-1.amazonaws.com/productDetails", {
-                body: JSON.stringify(form.initialValues),
+          <Button onClick = {()=>{
+            console.log("values here", form.values)
+             fetch("http://localhost:5000/productDetails", {
+                body: JSON.stringify(form.values),
                 headers: {
                   'Accept': 'application/json',
                   'Content-Type': 'application/json'

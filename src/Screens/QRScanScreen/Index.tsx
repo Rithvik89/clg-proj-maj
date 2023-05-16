@@ -67,10 +67,9 @@ function QRScanIndex() {
       <Button
         onClick={handleManually}
         style={{
-          // marginTop: "100px",
-          // marginBottom: "10px",
+          margin:"20px",
           display: "block",
-          width: "40%",
+          width: "20%",
         }}
       >
         Know Product Details at a scan

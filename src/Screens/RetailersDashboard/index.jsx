@@ -1,10 +1,12 @@
 import { useEffect } from 'react'
 import styled from "styled-components"
-import { Table, Input, Tooltip } from '@mantine/core';
+import { Table, Input, Tooltip ,Button} from '@mantine/core';
 import { useState } from 'react';
 import { IconBrandTwitter, IconAlertCircle } from '@tabler/icons';
 import { Link } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router';
+
 
 
 const SHomeIndex = styled.div`
@@ -15,22 +17,19 @@ const SHomeIndex = styled.div`
   margin:20px;
 `
 
-function HomeIndex() {
-  const [{ token }] = useCookies(['token']);
-  const [data, setData] = useState(null)
-  console.log(token);
+const elements = [
+  { count: 1, transactionDate : '12/03/2022', broughtFrom: "Reliance Pvt.lmd", value:150 , productId:"4587f#"},
+  { count: 2, transactionDate : '1/04/2022', broughtFrom: "Swadheshi Pvt.lmd", value:250 , productId:"45987#"},
+  { count: 3, transactionDate : '12/04/2022', broughtFrom: "Priya Pvt.lmd", value:230 , productId:"458fw#"},
+  { count: 4, transactionDate : '21/05/2022', broughtFrom: "Reliance Pvt.lmd", value:270 , productId:"4557f#"},
+  { count: 5, transactionDate : '12/10/2022', broughtFrom: "Priya Pvt.lmd", value:110 , productId:"5522f#"},
+  { count: 6, transactionDate : '23/10/2022', broughtFrom: "AMul Pvt.lmd", value:100 , productId:"4588f#" },
+  { count: 7, transactionDate : '25/10/2022', broughtFrom: "Reliance Pvt.lmd", value:150 , productId:"4187f#"},
+];
 
-  useEffect(() => {
-    fetch("https://qzcmrn5rh2.execute-api.ap-south-1.amazonaws.com/retailersDashboard", {
-      body: JSON.stringify({ token: token }),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      method: "POST"
-    }).then(res => res.json())
-      .then(res => setData(res))
-  }, [])
+function HomeIndex() {
+  const navigator = useNavigate();
+
   const ths = (
     <tr>
       <th>count</th>
@@ -41,49 +40,49 @@ function HomeIndex() {
     </tr>
   );
 
-  const renderData = () => {
-    if (!data) return null;
-    const rowsIn = data?.in.map((element) => (
-      <tr key={element.count}>
-        <td>{element.count}</td>
-        <td>{(new Date(element.transactionDate)).toDateString()}</td>
-        <td>{element.broughtFrom}</td>
-        <td>{element.value}</td>
-        <td><Link to={`/customerDashboard/${element.productId}`} >{element.productId}</Link></td>
-      </tr>
-    ));
-    return (
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "50px" }}>
-        <h1 style={{ marginBottom: "20px" }}>Retailer Dashboard</h1>
-        <Input
-          icon={<IconBrandTwitter size={16} />}
-          placeholder="Transactions Id"
-          rightSection={
-            <Tooltip label="This is public" position="top-end" withArrow>
-              <div>
-                <IconAlertCircle size={18} style={{ display: 'block', opacity: 0.5 }} />
-              </div>
-            </Tooltip>
-          }
+  const rows = elements.map((element) => (
+    <tr key={element.count}>
+      <td>{element.count}</td>
+      <td>{element.transactionDate}</td>
+      <td>{element.broughtFrom}</td>
+      <td>{element.value}</td>
+      <td><Link to={`/customerDashboard/1`} >{element.productId}</Link></td>
+    </tr>
+  ));
+return (
+      <div style={{display:"flex",flexDirection:"column",alignItems:"center", marginTop:"50px"}}>
+        <h1 style={{marginBottom:"20px"}}>Distributors Dashboard</h1>
+      <Input
+      icon={<IconBrandTwitter size={16} />}
+      placeholder="Transactions Id"
+      rightSection={
+        <Tooltip label="This is public" position="top-end" withArrow>
+          <div>
+            <IconAlertCircle size={18} style={{ display: 'block', opacity: 0.5 }} />
+          </div>
+        </Tooltip>
+      }
+    
+    />
+    
+    <Button onClick={()=>navigator("/addProduct")} style={{margin:"10px"}}>Add Product</Button>
 
-        />
-        <SHomeIndex>
-          <Table striped highlightOnHover withBorder withColumnBorders style={{ width: "35%" }}>
-            <caption style={{ fontWeight: 1000 }}>Transaction In</caption>
-            <thead>{ths}</thead>
-            <tbody>{rowsIn}</tbody>
-          </Table>
-          <Table striped highlightOnHover withBorder withColumnBorders style={{ width: "35%" }}>
-            <caption style={{ fontWeight: 1000 }}>Transaction Out</caption>
-            <thead>{ths}</thead>
-            <tbody>{rowsIn}</tbody>
-          </Table>
-        </SHomeIndex>
-      </div>
-    )
-  }
-  return renderData();
+    <SHomeIndex>
+      <Table striped highlightOnHover withBorder withColumnBorders style={{width:"35%"}}>
+      <caption style={{fontWeight:1000}}>Transaction In</caption>
+      <thead>{ths}</thead>
+      <tbody>{rows}</tbody>
+    </Table>
+    <Table striped highlightOnHover withBorder withColumnBorders style={{width:"35%"}}>
+      <caption style={{fontWeight:1000}}>Transaction Out</caption>
+      <thead>{ths}</thead>
+      <tbody>{rows}</tbody>
+    </Table>
+  </SHomeIndex>
+    </div>
+);
 }
+
 
 
 

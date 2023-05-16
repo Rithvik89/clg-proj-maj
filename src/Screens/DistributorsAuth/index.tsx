@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from "styled-components"
 import { IconEye, IconEyeOff } from '../../Atoms/Icons';
 import IconWrapper from '../../Atoms/IconWrapper';
+import { useCookies } from 'react-cookie';
 
 const SHomeIndex = styled.div`
   display: flex;
@@ -12,13 +13,28 @@ const SHomeIndex = styled.div`
 `
 
 function HomeIndex() {
-    const [credentials, setCredentials] = useState({ email: "", password: "" });
+    const [credentials, setCredentials] = useState({ email: "", password: "", role:"distributor"  });
     const [showPassword, setShowPassword] = useState(false);
+    const [token, setToken] = useCookies(['token'])
     const [forgotPasswordModal, setForgotPasswordModal] = useState(false);
     const navigator = useNavigate();
 
     function handleLogin() {
-        handleRouteToProfile();
+      console.log(credentials)
+      fetch("https://qzcmrn5rh2.execute-api.ap-south-1.amazonaws.com/roleBasedAuth", {
+        body: JSON.stringify(credentials),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        method: "POST"
+      })
+        .then(res => res.json())
+        .then(({ token, match }) => {
+          if (!token) return alert("creds are not correct")
+          setToken('token', token)
+          handleRouteToProfile();
+        })
     }
     function handleRouteToProfile() {
         navigator("/distributorsDashboard")
