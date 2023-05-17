@@ -34,6 +34,14 @@ const SHomeIndex = styled.div`
   justify-content:space-around;
   width : 100%;
 `
+const QModule = styled.div`
+   display: flex;
+   flex-direction:column;
+   margin:20px;
+   text-align:center;
+   padding:15px;
+`
+
 export const options = {
   responsive: true,
   plugins: {
@@ -78,9 +86,18 @@ const quan = [
   {count :5, product_stop: "Not yet decided", weight_stop:"Not yet weighted", taken_at:"--/--/----"},
 ]
 
+const perish = [
+  "Good to use",
+  "Slightly perished",
+  "Perished",
+  "Fully perished"
+]
+
 let temperatureData= []
 let n=0;
 let methaneData = []
+let statement = ""
+let perishability = 55
 
 function HomeIndex() {
   const { productId } = useParams()
@@ -88,6 +105,8 @@ function HomeIndex() {
   let [quantityData, setQuantityData] = useState(null);
   let [productData, setProductData] = useState(null);
   const [data, setData] = useState(null)
+  let [perishability,setPerishability] = useState(null)
+  let [statement,setStatement] = useState("")
 
   const size = window.innerWidth
   
@@ -118,9 +137,32 @@ function HomeIndex() {
         temperatureData.push(each.temperature);
         n=n+1;
       })
+      temperatureData.reverse();
       res.quality_details.map(each=>{
         methaneData.push(each.gas);
       })
+      methaneData.reverse();
+
+      if(methaneData[0]<500){
+        setPerishability(Math.round(30+Math.random()*10));
+        setStatement(perish[0]);
+      }
+      else{
+        if(methaneData[0]<540){
+        setPerishability(Math.round(50 + Math.random()*10));
+          setStatement(perish[1]);
+        }
+        else if (methaneData[0]<560){
+        setPerishability(Math.round(60 + Math.random()*10));
+           setStatement(perish[2]);  
+        }
+        else{
+        setPerishability(Math.round(70 + Math.random()*20));
+          setStatement(perish[3]);
+        }
+      }
+
+      // console.log(res.quality_details[res.quality_details.length-1].taken_at)
 
       setQualityData(res.quality_details)
     })
@@ -195,7 +237,7 @@ function HomeIndex() {
   }
   const dougnutGenerator = () => {
     if (!qualityData) return null
-    const  p = temperatureData[0];
+    const  p = perishability;
     let color = "rgb(0,255,0)";
     if (p > 60) { //danger
       color = "rgb(255,0,0)";
@@ -252,13 +294,17 @@ function HomeIndex() {
      size>=700 ? <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
      <h1 style={{ marginTop: "15px" }}>Customers Dashboard</h1>
      {renderChart()}
+     <QModule>
+      <h2 style={{color:"green"}}>Quality Module is Live</h2>
+      <h2>{statement}</h2>
+     </QModule>
      {dougnutGenerator()}
      <SHomeIndex>
        <Table striped highlightOnHover withBorder withColumnBorders style={{ width: "50%" }}>
          <caption>Product Details</caption>
          <thead>{ths}</thead>
          <tbody>{rows}</tbody>
-       </Table>
+       </Table>  
 
        <Timeline active={1} bulletSize={24} lineWidth={2}>
          <Timeline.Item bullet={<IconGitBranch size={12} />} title="Reached Stop 1 ">
@@ -291,13 +337,23 @@ function HomeIndex() {
            <Text size="xs" mt={4}>{quan[4].taken_at}</Text>
          </Timeline.Item>
        </Timeline>
-
      </SHomeIndex>
+
+     <button style = {{backgroundColor : "green"}} onClick={()=>{
+       setPerishability(Math.round(20 + Math.random()*10))
+       setStatement(perish[0]);
+     }}></button>
+     <button style = {{backgroundColor : "red"}} onClick={()=>{
+        setPerishability(Math.round(70 + Math.random()*20))
+        setStatement(perish[3]);
+     }} 
+     ></button>
 
    </div>:<div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
      <h1 style={{ marginTop: "15px" }}>Customers Dashboard</h1>
      {dougnutGenerator()}
      {renderChart()}
+     <p1 style={{color:"green"}}>Quality Module is Live</p1>
      </div>
   )
 }
